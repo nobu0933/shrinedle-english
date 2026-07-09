@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Shrinedle - English</title>
+    
+    <link rel="icon" href="KSK_fabicon_1.png" type="image/png">
+    <link rel="apple-touch-icon" href="KSK_logo.png?v=2">
+
+	<meta name="description" content="神社ワードル。Shrinedle。Jinja Wordle">
+	<meta name="keywords" content="神社ワードル, shrinedle, 神ドル, Shrinedle, 京都, 神社, ワードル, Shrine, shrine, wordle, Wordle, Kyoto, シュラインドル">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* デフォルト（スマホ・縦長画面）の設定 */
+        .pc-wide-container {
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto 20px auto;
+            box-sizing: border-box;
+        }
+
+        /* パソコン表示（画面幅が768px以上）のときの設定 */
+        @media screen and (min-width: 768px) {
+            .pc-wide-container {
+                max-width: 900px;
+            }
+        }
+
+        /* ロゴボタン用のスタイル */
+        .logo-btn {
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+            display: block;
+            outline: none;
+            transition: opacity 0.2s;
+        }
+        .logo-btn:hover {
+            opacity: 0.8;
+        }
+
+        /* 通常の昇段・降段通知用ポップアップスタイル */
+        .rank-notice-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 25000;
+            display: flex; justify-content: center; align-items: center;
+            padding: 20px; box-sizing: border-box;
+        }
+        .rank-notice-content {
+            background: white;
+            color: #333;
+            border-radius: 12px;
+            padding: 30px 25px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+            text-align: center;
+            animation: rankNoticePop 0.3s ease-out;
+        }
+        @keyframes rankNoticePop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .rank-notice-title {
+            font-size: 1.6rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .rank-notice-title.up { color: #e67e22; }
+        .rank-notice-title.down { color: #2c3e50; }
+        .rank-notice-body {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .rank-notice-btn {
+            padding: 10px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            background-color: #d9333f;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* キーボードの横幅とスタイル（ご指定の660px幅に調整） */
+        #keyboard {
+            width: 100%;
+            max-width: 660px;
+            margin: 0 auto;
+        }
+        .key {
+            flex: 1;
+            min-width: 35px;
+            height: 50px;
+            font-size: 1.05rem !important;
+        }
+        .key.wide {
+            flex: 1.5;
+            min-width: 55px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="name-setup-screen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255,255,255,0.98); z-index: 9999; justify-content: center; align-items: center; text-align: center; padding: 20px; box-sizing: border-box;">
+        <div style="background: white; border: 2px solid #d9333f; border-radius: 12px; padding: 40px 30px; max-width: 450px; width: 100%; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+            <h2 style="color: #d9333f; margin-top: 0; font-size: 1.8rem; margin-bottom: 10px;">Wordle EN</h2>
+            <p style="font-weight: bold; color: #333; margin-bottom: 25px; font-size: 1.1rem;">Set Player Name</p>
+            <input type="text" id="player-name-input" maxlength="10" placeholder="Enter Name (Max 10 chars)" style="width: 100%; padding: 12px; font-size: 1.1rem; border: 2px solid #ccc; border-radius: 6px; text-align: center; box-sizing: border-box; margin-bottom: 15px;">
+            <button id="btn-save-name" style="width: 100%; padding: 12px; background-color: #d9333f; color: white; border: none; border-radius: 6px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: background-color 0.2s; margin-bottom: 10px;">Register & Start</button>
+            <button id="btn-skip-name" style="width: 100%; padding: 12px; background-color: #7f8c8d; color: white; border: none; border-radius: 6px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: background-color 0.2s;">Play as Guest</button>
+            <p style="color: #7f8c8d; font-size: 0.85rem; margin-top: 20px; line-height: 1.4;">* You can change your name anytime from the stats panel.</p>
+        </div>
+    </div>
+
+    <div id="stats-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box;">
+        <div style="background: white; border-radius: 10px; max-width: 550px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #d9333f; padding-bottom: 10px; margin-bottom: 20px;">
+                <h3 style="margin: 0; color: #d9333f; font-size: 1.4rem;">📊 Stats for <span id="stats-player-title"></span></h3>
+                <button id="btn-close-stats" style="padding: 6px 12px; background-color: #555; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.85rem;">Close</button>
+            </div>
+            
+            <div style="margin-bottom: 15px; background: #fff5f5; padding: 10px; border-radius: 6px; border: 1px solid #ffd1d1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <span style="font-weight: bold; color: #d9333f; font-size: 1.1rem;">Current Rank: <span id="stat-current-rank" style="font-size: 1.25rem;">Novice</span></span>
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <h4 style="margin: 0 0 10px 0; color: #d9333f; border-left: 4px solid #d9333f; padding-left: 8px;">Game Statistics</h4>
+                <p style="margin: 5px 0; font-size: 0.95rem;">Total Wins: <b id="stat-easy-wins" style="font-size: 1.1rem; color: #333;">0</b></p>
+                <p style="margin: 5px 0; font-size: 0.95rem;">Current / Max Streak: <b id="stat-easy-streak" style="font-size: 1.1rem; color: #333;">0 / 0</b></p>
+                <p style="margin: 5px 0; font-size: 0.95rem;">Average Attempts (Total): <b id="stat-easy-avg-attempts" style="font-size: 1.1rem; color: #333;">0.0</b></p>
+                <p style="margin: 5px 0; font-size: 0.95rem; color: #666;">Average Attempts (Last 10 games): <b id="stat-easy-recent-avg-attempts" style="font-size: 1.1rem; color: #3498db;">0.0</b></p>
+            </div>
+
+            <div style="text-align: right; margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;">
+                <button id="btn-change-name-trigger" style="padding: 6px 12px; background-color: #7f8c8d; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">Change Player Name</button>
+            </div>
+        </div>
+    </div>
+
+    <header style="display: flex; justify-content: space-between; align-items: center; max-width: 750px; margin: 0 auto 25px auto; padding: 0 10px; box-sizing: border-box; text-align: left;">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div style="padding-right: 5px;">
+                <h1 style="color: #d9333f; margin: 0; font-size: 2.6rem; line-height: 1.1; font-weight: bold;">Shrinedle</h1>
+                <div class="subtitle" style="font-size: 1rem; color: #666; margin-top: 4px; letter-spacing: 2px;">神社ワードル</div>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: center; align-items: center; flex: 1; padding: 0 10px;">
+            <button id="btn-secret-logo" class="logo-btn" title="制作者日記を見る">
+                <img src="KSK_logo.png" alt="KSK Logo" style="height: 110px; width: auto; object-fit: contain; display: block;">
+            </button>
+        </div>
+
+        <div id="header-player-panel" style="text-align: right; border-left: 2px solid #e0dbcd; padding-left: 15px; min-width: 140px;">
+            <div id="display-player-name" style="font-weight: bold; color: #333; font-size: 1.05rem; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">Guest</div>
+            <div id="display-player-rank" style="font-size: 1.15rem; color: #d9333f; font-weight: bold; margin-bottom: 8px; white-space: nowrap;">Rank: Novice</div>
+            <button id="btn-view-stats" style="padding: 6px 12px; background-color: #d9333f; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.85rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); white-space: nowrap;">View Stats</button>
+        </div>
+    </header>
+
+    <div class="pc-wide-container" style="text-align: center; margin-bottom: 20px; font-size: 1.2rem; color: #333;">
+
+        If you want to play Japanese ver. , click <a href="https://nobu0933.github.io/shrinedle/" target="_blank" style="color: #0066cc; text-decoration: underline; font-weight: bold;">here</a>.
+    </div>
+
+    <div id="rule-box" class="pc-wide-container" style="background-color: #ffffff; border: 2px solid #e0dbcd; border-radius: 8px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: left;">
+        <h3 style="margin-top: 0; margin-bottom: 12px; color: #d9333f; font-size: 1.2rem; border-bottom: 2px solid #d9333f; padding-bottom: 5px; display: inline-block;">Rules</h3>
+        <ul style="margin: 0; padding-left: 20px; font-size: 0.9rem; color: #333; line-height: 1.6;">
+            <li style="margin-bottom: 8px; font-weight: bold; color: #d9333f;">All questions are based on shrines in Kyoto. (Includes some lesser-known shrines.)</li>
+            <li style="margin-bottom: 8px;">Guess the 5-letter word in 6 attempts.</li>
+            <li style="margin-bottom: 8px;">Each guess must be a valid 5-letter word from the shrine list.</li>
+            <li style="margin-bottom: 8px;">The color of the tiles will change to show how close your guess was to the word.</li>
+            <li style="margin-bottom: 8px;"><b style="color: #6aaa64;">Green</b>: The letter is in the word and in the correct spot.</li>
+            <li style="margin-bottom: 8px;"><b style="color: #c9b458;">Yellow</b>: The letter is in the word but in the wrong spot.</li>
+            <li style="margin-bottom: 0; color: #27ae60; font-weight: bold;">💡 Hint Button: Displays a valid, unused shrine code that is NOT the correct answer. (Max 5 times per game)</li>
+        </ul>
+    </div>
+
+    <div id="diary-section" class="pc-wide-container" style="display: none; background-color: #fdfbf7; border: 2px solid #dcd5c5; border-radius: 8px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: left;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #d9333f; padding-bottom: 8px; margin-bottom: 20px;">
+            <h2 style="margin: 0; color: #d9333f; font-size: 1.5rem;">✍️ Diary（Hidden Page）</h2>
+            <button id="btn-close-diary" style="padding: 6px 12px; background-color: #555; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.85rem;">Back</button>
+        </div>
+
+	<div style="background-color: #f2ede2; border-left: 4px solid #7f8c8d; padding: 10px 15px; margin-bottom: 20px; font-size: 0.88rem; color: #555; font-style: italic;">
+            ⚠️ Sorry, this page is available in Japanese only! Please use AI or translation tools to read it.
+        </div>
+        
+        <div id="diary-articles-container" style="color: #333; line-height: 1.8; font-size: 0.95rem;">
+            </div>
+    </div>
+
+    <div id="game-content" style="display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 20px;">
+        <div id="status-container" style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; width: 100%; max-width: 440px;">
+            <div id="counter" style="font-weight: bold; font-size: 1rem; color: #555;">Attempt: 1 / 6</div>
+            <div style="display: flex; gap: 5px;">
+                <button id="btn-giveup" style="padding: 6px 12px; background-color: #e67e22; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.85rem;">Give Up</button>
+                <button id="btn-reset" style="padding: 6px 12px; background-color: #333; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.85rem;">Reset</button>
+            </div>
+        </div>
+        
+        <div id="message" style="font-weight: bold; color: #d9333f; min-height: 24px; margin-bottom: 15px; text-align: center; max-width: 400px; line-height: 1.4; white-space: pre-line;"></div>
+
+        <div id="input-container" style="margin-bottom: 20px; display: flex; gap: 8px; justify-content: center; width: 100%; max-width: 440px;">
+            <input type="text" id="shrine-input" placeholder="Enter word" maxlength="5" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                   style="flex: 1; padding: 10px; font-size: 1.2rem; border: 2px solid #ccc; border-radius: 4px; text-align: center; min-width: 0;">
+            <button id="btn-submit-guess" style="padding: 10px 15px; font-size: 1.1rem; background-color: #d9333f; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; white-space: nowrap;">Guess</button>
+            <button id="btn-hint" style="padding: 10px 15px; font-size: 1.1rem; background-color: #2ecc71; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; white-space: nowrap;">Hint (5 left)</button>
+        </div>
+
+        <div id="description-box" style="display: none; background: #fdfbf7; border: 1px solid #e0dbcd; padding: 15px; border-radius: 6px; width: 100%; max-width: 440px; margin-bottom: 20px;">
+            <h3 id="desc-title" style="margin-top:0; color:#d9333f;">Word Meaning</h3>
+            <p id="desc-text">Description goes here.</p>
+        </div>
+
+        <div class="game-container" style="max-width: 660px; width: 100%; display: flex; flex-direction: column; align-items: center;">
+            <div id="board" style="display: grid; grid-template-rows: repeat(6, 1fr); gap: 5px; margin-bottom: 20px;"></div>
+
+            <div id="keyboard" style="display: flex; flex-direction: column; gap: 6px; align-items: center;">
+                <div class="key-row" style="display: flex; gap: 4px; width: 100%;"><button class="key" data-key="Q">Q</button><button class="key" data-key="W">W</button><button class="key" data-key="E">E</button><button class="key" data-key="R">R</button><button class="key" data-key="T">T</button><button class="key" data-key="Y">Y</button><button class="key" data-key="U">U</button><button class="key" data-key="I">I</button><button class="key" data-key="O">O</button><button class="key" data-key="P">P</button></div>
+                <div class="key-row" style="display: flex; gap: 4px; width: 90%;"><button class="key" data-key="A">A</button><button class="key" data-key="S">S</button><button class="key" data-key="D">D</button><button class="key" data-key="F">F</button><button class="key" data-key="G">G</button><button class="key" data-key="H">H</button><button class="key" data-key="J">J</button><button class="key" data-key="K">K</button><button class="key" data-key="L">L</button></div>
+                <div class="key-row" style="display: flex; gap: 4px; width: 100%;">
+                    <button class="key wide" id="btn-backspace" style="padding: 10px; font-weight: bold; background-color: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer;">Del</button>
+                    <button class="key" data-key="Z">Z</button><button class="key" data-key="X">X</button><button class="key" data-key="C">C</button><button class="key" data-key="V">V</button><button class="key" data-key="B">B</button><button class="key" data-key="N">N</button><button class="key" data-key="M">M</button>
+                    <button class="key wide" id="btn-enter" style="padding: 10px; font-weight: bold; background-color: #2ecc71; color: white; border: none; border-radius: 4px; cursor: pointer;">Ent</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="shrine-data-english.js"></script>
+    <script src="diary-data.js"></script>
+
+    <script>
+        const ALLOWED_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+        let ANSWER = "";
+        let guessedWords = []; 
+        let VISUAL_MAX_LENGTH = 5; 
+        let MAX_ATTEMPTS = 6;      
+        let hintCount = 5;         
+
+        let currentRow = 0;
+        let gameOver = false;
+        let previousRankName = ""; 
+
+        let pData = {
+            name: "",
+            isGuestSkippedName: false,
+            wins: 0,
+            currentStreak: 0,
+            maxStreak: 0,
+            totalAttempts: 0,
+            winCountForAvg: 0,
+            recentAttempts: []
+        };
+
+        const RANK_PRIORITY = {
+            "Novice": 1, 
+            "Apprentice": 2, 
+            "Adept": 3, 
+            "Expert": 4, 
+            "Master": 5, 
+            "Grandmaster": 6
+        };
+
+        function loadPlayerData() {
+            const saved = localStorage.getItem("wordle_en_player_data");
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    if (!parsed.recentAttempts) parsed.recentAttempts = [];
+                    pData = Object.assign({}, pData, parsed);
+                } catch(e) {
+                    console.error(e);
+                }
+            }
+            previousRankName = calculateRank();
+        }
+
+        function savePlayerData() {
+            const beforeRank = previousRankName;
+            const afterRank = calculateRank();
+
+            localStorage.setItem("wordle_en_player_data", JSON.stringify(pData));
+            updateHeaderUI();
+
+            if (beforeRank !== afterRank) {
+                const beforePriority = RANK_PRIORITY[beforeRank] || 0;
+                const finalPriority = RANK_PRIORITY[afterRank] || 0;
+                if (finalPriority > beforePriority) {
+                    let bodyText = `Congratulations!<br>Your rank advanced from <strong>【${beforeRank}】</strong> to <strong>【${afterRank}】</strong>!`;
+                    
+                    // Grandmasterになった時だけリンク付き英文を追加
+                    if (afterRank === "Grandmaster") {
+                        bodyText += `<br><br><span style="font-size: 1.05rem; font-weight: bold; display: block; margin-top: 10px; color: #333;">I want you to play <a href="https://nobu0933.github.io/shrinedle/" target="_blank" style="color: #0066cc; text-decoration: underline; font-weight: bold;">Japanese ver.</a> !</span>`;
+                    }
+                    
+                    showRankNoticeModal("🎉 Rank Up!", bodyText, "up");
+                } else if (finalPriority < beforePriority) {
+                    showRankNoticeModal("📉 Rank Down", `Your rank changed from <strong>【${beforeRank}】</strong> to <strong>【${afterRank}】</strong>.`, "down");
+                }
+            }
+            previousRankName = afterRank;
+        }
+
+        function calculateRank() {
+            const wins = pData.wins || 0;
+            const streak = pData.maxStreak || 0;
+            const recent = pData.recentAttempts || [];
+            const recent10 = recent.slice(-10);
+            
+            const recentAvg = recent10.length > 0 ? (recent10.reduce((a,b)=>a+b,0)/recent10.length) : 7;
+
+            if (wins >= 50 && recentAvg <= 3.5) return "Grandmaster";
+            if (wins >= 30 && recentAvg <= 4.0) return "Master";
+            if (wins >= 15 && streak >= 5) return "Expert";
+            if (wins >= 5) return "Adept";
+            if (wins >= 1) return "Apprentice";
+            
+            return "Novice";
+        }
+
+        function updateHeaderUI() {
+            document.getElementById("display-player-name").textContent = pData.name ? pData.name : "Guest";
+            const currentRank = calculateRank();
+            document.getElementById("display-player-rank").textContent = `Rank: ${currentRank}`;
+            
+            document.getElementById("stats-player-title").textContent = pData.name ? pData.name : "Guest";
+            document.getElementById("stat-current-rank").textContent = currentRank;
+            document.getElementById("stat-easy-wins").textContent = pData.wins;
+            document.getElementById("stat-easy-streak").textContent = `${pData.currentStreak} / ${pData.maxStreak}`;
+            
+            const avgAll = pData.winCountForAvg > 0 ? (pData.totalAttempts / pData.winCountForAvg).toFixed(1) : "0.0";
+            document.getElementById("stat-easy-avg-attempts").textContent = avgAll;
+            
+            const recent10 = pData.recentAttempts.slice(-10);
+            const avgRecent = recent10.length > 0 ? (recent10.reduce((a,b)=>a+b,0)/recent10.length).toFixed(1) : "0.0";
+            document.getElementById("stat-easy-recent-avg-attempts").textContent = avgRecent;
+        }
+
+        function showRankNoticeModal(title, body, type) {
+            const overlay = document.createElement("div");
+            overlay.className = "rank-notice-overlay";
+            overlay.innerHTML = `
+                <div class="rank-notice-content">
+                    <div class="rank-notice-title ${type}">${title}</div>
+                    <div class="rank-notice-body">${body}</div>
+                    <button class="rank-notice-btn" style="margin-top: 5px;">OK</button>
+                </div>
+            `;
+            overlay.querySelector(".rank-notice-btn").addEventListener("click", () => overlay.remove());
+            document.body.appendChild(overlay);
+        }
+
+        function initBoard() {
+            const board = document.getElementById("board");
+            board.innerHTML = "";
+            board.style.gridTemplateColumns = `repeat(${VISUAL_MAX_LENGTH}, 60px)`;
+            
+            for (let i = 0; i < MAX_ATTEMPTS; i++) {
+                for (let j = 0; j < VISUAL_MAX_LENGTH; j++) {
+                    const tile = document.createElement("div");
+                    tile.id = `tile-${i}-${j}`;
+                    tile.style.width = "60px";
+                    tile.style.height = "60px";
+                    tile.style.border = "2px solid #ccc";
+                    tile.style.display = "flex";
+                    tile.style.justifyContent = "center";
+                    tile.style.alignItems = "center";
+                    tile.style.fontSize = "2rem";
+                    tile.style.fontWeight = "bold";
+                    tile.style.textTransform = "uppercase";
+                    board.appendChild(tile);
+                }
+            }
+        }
+
+        function startGame() {
+            guessedWords = []; 
+            hintCount = 5;     
+            
+            const hintBtn = document.getElementById("btn-hint");
+            if (hintBtn) {
+                hintBtn.textContent = `Hint (${hintCount} left)`;
+                hintBtn.disabled = false;
+                hintBtn.style.backgroundColor = "#2ecc71"; 
+            }
+
+            currentRow = 0;
+            gameOver = false;
+            document.getElementById("message").textContent = "";
+            document.getElementById("shrine-input").value = "";
+            document.getElementById("shrine-input").disabled = false;
+            document.getElementById("counter").textContent = `Attempt: 1 / ${MAX_ATTEMPTS}`;
+            document.getElementById("description-box").style.display = "none";
+            
+            document.querySelectorAll(".key:not(#btn-backspace):not(#btn-enter)").forEach(k => {
+                k.style.backgroundColor = "#e0e0e0";
+                k.style.color = "#333";
+            });
+
+            if (typeof SHRINE_DATA_English !== "undefined" && Object.keys(SHRINE_DATA_English).length > 0) {
+                const keys = Object.keys(SHRINE_DATA_English).filter(key => key.length === VISUAL_MAX_LENGTH);
+                if (keys.length > 0) {
+                    ANSWER = keys[Math.floor(Math.random() * keys.length)].toUpperCase();
+                } else {
+                    ANSWER = "AWATA";
+                }
+            } else {
+                ANSWER = "AWATA";
+            }
+            
+            initBoard();
+        }
+
+        function submitGuess() {
+            if (gameOver) return;
+            
+            const inputEl = document.getElementById("shrine-input");
+            const guess = inputEl.value.trim().toUpperCase();
+
+            if (guess.length !== VISUAL_MAX_LENGTH) {
+                document.getElementById("message").textContent = `Word must be ${VISUAL_MAX_LENGTH} letters.`;
+                return;
+            }
+
+            for (let char of guess) {
+                if (!ALLOWED_CHARS.includes(char)) {
+                    document.getElementById("message").textContent = "Invalid characters.";
+                    return;
+                }
+            }
+
+            if (typeof SHRINE_DATA_English !== "undefined") {
+                if (!SHRINE_DATA_English[guess]) {
+                    document.getElementById("message").textContent = "Not in the Shrine list! Try another word.";
+                    return;
+                }
+            }
+
+            document.getElementById("message").textContent = "";
+            
+            if (!guessedWords.includes(guess)) {
+                guessedWords.push(guess);
+            }
+
+            const answerLetters = ANSWER.split("");
+            const guessLetters = guess.split("");
+            const tileStatuses = Array(VISUAL_MAX_LENGTH).fill("absent");
+
+            for (let i = 0; i < VISUAL_MAX_LENGTH; i++) {
+                if (guessLetters[i] === answerLetters[i]) {
+                    tileStatuses[i] = "correct";
+                    answerLetters[i] = null; 
+                }
+            }
+
+            for (let i = 0; i < VISUAL_MAX_LENGTH; i++) {
+                if (tileStatuses[i] === "correct") continue;
+                const index = answerLetters.indexOf(guessLetters[i]);
+                if (index !== -1) {
+                    tileStatuses[i] = "present";
+                    answerLetters[index] = null;
+                }
+            }
+
+            for (let i = 0; i < VISUAL_MAX_LENGTH; i++) {
+                const tile = document.getElementById(`tile-${currentRow}-${i}`);
+                tile.textContent = guessLetters[i];
+                tile.className = ""; 
+
+                if (tileStatuses[i] === "correct") {
+                    tile.style.backgroundColor = "#6aaa64";
+                    tile.style.color = "white";
+                    tile.style.borderColor = "#6aaa64";
+                } else if (tileStatuses[i] === "present") {
+                    tile.style.backgroundColor = "#c9b458";
+                    tile.style.color = "white";
+                    tile.style.borderColor = "#c9b458";
+                } else {
+                    tile.style.backgroundColor = "#787c7e";
+                    tile.style.color = "white";
+                    tile.style.borderColor = "#787c7e";
+                }
+
+                const keyButton = document.querySelector(`.key[data-key="${guessLetters[i]}"]`);
+                if (keyButton) {
+                    if (tileStatuses[i] === "correct") {
+                        keyButton.style.backgroundColor = "#6aaa64";
+                        keyButton.style.color = "white";
+                    } else if (tileStatuses[i] === "present" && keyButton.style.backgroundColor !== "rgb(106, 170, 100)") {
+                        keyButton.style.backgroundColor = "#c9b458";
+                        keyButton.style.color = "white";
+                    } else if (tileStatuses[i] === "absent" && keyButton.style.backgroundColor !== "rgb(106, 170, 100)" && keyButton.style.backgroundColor !== "rgb(201, 180, 88)") {
+                        keyButton.style.backgroundColor = "#787c7e";
+                        keyButton.style.color = "white";
+                    }
+                }
+            }
+
+            currentRow++;
+            inputEl.value = "";
+
+            if (guess === ANSWER) {
+                document.getElementById("message").textContent = "🎉 Correct!";
+                gameOver = true;
+                inputEl.disabled = true;
+                
+                pData.wins++;
+                pData.currentStreak++;
+                if (pData.currentStreak > pData.maxStreak) pData.maxStreak = pData.currentStreak;
+                pData.totalAttempts += currentRow;
+                pData.winCountForAvg++;
+                pData.recentAttempts.push(currentRow);
+                
+                savePlayerData();
+                showDescription(); 
+            } else if (currentRow >= MAX_ATTEMPTS) {
+                document.getElementById("message").textContent = `Game Over. Word was: ${ANSWER}`;
+                gameOver = true;
+                inputEl.disabled = true;
+                pData.currentStreak = 0;
+                savePlayerData();
+                showDescription(); 
+            } else {
+                document.getElementById("counter").textContent = `Attempt: ${currentRow + 1} / ${MAX_ATTEMPTS}`;
+            }
+        }
+
+        function showDescription() {
+            if (typeof SHRINE_DATA_English !== "undefined" && SHRINE_DATA_English[ANSWER]) {
+                const data = SHRINE_DATA_English[ANSWER];
+                
+                const kanji = data.kanji || "不明な神社";
+                const descJa = data.desc || "日本語の説明はありません。";
+                const descEn = data.desc_english || "No English description available.";
+
+                document.getElementById("desc-title").textContent = `${kanji} (${ANSWER})`;
+                
+                // 解説テキストのベースをセット（最後にボタンを入れるための div を用意）
+                const descTextEl = document.getElementById("desc-text");
+                descTextEl.innerHTML = `
+                    <div style="margin-bottom: 10px; color: #333;">${descJa}</div>
+                    <div style="color: #666; font-style: italic; border-top: 1px dashed #e0dbcd; padding-top: 10px; margin-bottom: 15px;">${descEn}</div>
+                    <div id="map-btn-container" style="text-align: center; margin-top: 15px;"></div>
+                `;
+                
+                // Google Maps ボタンの生成
+                const mapBtn = document.createElement("a");
+                const searchQuery = encodeURIComponent("京都 " + kanji);
+                mapBtn.href = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
+                mapBtn.target = "_blank";
+                mapBtn.textContent = "🗺️ View Location on Google Maps";
+                
+                // ボタンのスタイリング（前回のコードのスタイルを継承）
+                mapBtn.style.display = "inline-block";
+                mapBtn.style.padding = "10px 20px";
+                mapBtn.style.backgroundColor = "#27ae60";
+                mapBtn.style.color = "white";
+                mapBtn.style.textDecoration = "none";
+                mapBtn.style.fontWeight = "bold";
+                mapBtn.style.borderRadius = "4px";
+                mapBtn.style.fontSize = "1rem";
+                mapBtn.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
+                mapBtn.style.transition = "background-color 0.2s";
+                
+                // ホバーエフェクト
+                mapBtn.onmouseover = () => mapBtn.style.backgroundColor = "#219653";
+                mapBtn.onmouseout = () => mapBtn.style.backgroundColor = "#27ae60";
+
+                // 用意したコンテナにボタンを追加
+                document.getElementById("map-btn-container").appendChild(mapBtn);
+                
+                const descBox = document.getElementById("description-box");
+                descBox.style.display = "block";
+                descBox.classList.add("description-fade-in");
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadPlayerData();
+
+            if (!pData.name && !pData.isGuestSkippedName) {
+                document.getElementById("name-setup-screen").style.display = "flex";
+            } else {
+                updateHeaderUI();
+                startGame();
+            }
+
+            document.getElementById("btn-secret-logo").addEventListener("click", () => {
+                const section = document.getElementById("diary-section");
+                const container = document.getElementById("diary-articles-container");
+                container.innerHTML = ""; 
+
+                const targetData = typeof DIARY_DATA !== "undefined" ? DIARY_DATA : (typeof diaryData !== "undefined" ? diaryData : null);
+
+                if (Array.isArray(targetData) && targetData.length > 0) {
+                    targetData.forEach(item => {
+                        const entryEl = document.createElement("div");
+                        entryEl.style.marginBottom = "25px";
+                        entryEl.style.paddingBottom = "15px";
+                        entryEl.style.borderBottom = "1px dashed #dcd5c5";
+
+                        const titleHeader = document.createElement("h3");
+                        titleHeader.style.margin = "0 0 10px 0";
+                        titleHeader.style.color = "#d9333f";
+                        titleHeader.style.fontSize = "1.15rem";
+                        
+                        const datePrefix = item.date ? `[${item.date}] ` : "";
+                        const titleText = item.title || "無題";
+                        titleHeader.textContent = datePrefix + titleText;
+
+                        const contentBody = document.createElement("p");
+                        contentBody.style.margin = "0";
+                        contentBody.style.whiteSpace = "pre-wrap";
+                        contentBody.style.color = "#333";
+                        contentBody.style.lineHeight = "1.7";
+                        contentBody.innerHTML = item.content || item.body || item.text || "";
+
+                        entryEl.appendChild(titleHeader);
+                        entryEl.appendChild(contentBody);
+                        container.appendChild(entryEl);
+                    });
+                } else {
+                    container.innerHTML = `<p style="color:#777; text-align:center; padding: 20px 0;">⚠️ 日記データが読み込めないか、空っぽです。</p>`;
+                }
+
+                section.style.display = "block";
+                section.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            document.getElementById("btn-close-diary").addEventListener("click", () => {
+                document.getElementById("diary-section").style.display = "none";
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            document.getElementById("btn-save-name").addEventListener("click", () => {
+                const nameInput = document.getElementById("player-name-input").value.trim();
+                if (nameInput) {
+                    pData.name = nameInput;
+                    pData.isGuestSkippedName = false;
+                    savePlayerData();
+                    document.getElementById("name-setup-screen").style.display = "none";
+                    startGame();
+                }
+            });
+
+            document.getElementById("btn-hint").addEventListener("click", () => {
+                if (gameOver) return;
+                if (hintCount <= 0) {
+                    document.getElementById("message").textContent = "No hints left!";
+                    return;
+                }
+
+                if (typeof SHRINE_DATA_English === "undefined") return;
+
+                const allKeys = Object.keys(SHRINE_DATA_English).filter(key => key.length === VISUAL_MAX_LENGTH);
+                const candidates = allKeys.filter(key => {
+                    const upperKey = key.toUpperCase();
+                    return upperKey !== ANSWER && !guessedWords.includes(upperKey);
+                });
+
+                if (candidates.length > 0) {
+                    const randomHint = candidates[Math.floor(Math.random() * candidates.length)].toUpperCase();
+                    const kanjiName = SHRINE_DATA_English[randomHint].kanji || "";
+                    
+                    document.getElementById("message").innerHTML = `💡 Hint: Try <b style="color:#27ae60; font-size:1.2rem;">${randomHint}</b> (${kanjiName})`;
+                    
+                    hintCount--;
+                    const hintBtn = document.getElementById("btn-hint");
+                    hintBtn.textContent = `Hint (${hintCount} left)`;
+                    
+                    if (hintCount === 0) {
+                        hintBtn.style.backgroundColor = "#7f8c8d";
+                        hintBtn.disabled = true;
+                    }
+                } else {
+                    document.getElementById("message").textContent = "No more valid hints available!";
+                }
+            });
+
+            document.getElementById("btn-skip-name").addEventListener("click", () => {
+                pData.isGuestSkippedName = true;
+                savePlayerData();
+                document.getElementById("name-setup-screen").style.display = "none";
+                startGame();
+            });
+
+            document.getElementById("btn-view-stats").addEventListener("click", () => {
+                document.getElementById("stats-modal").style.display = "flex";
+            });
+            document.getElementById("btn-close-stats").addEventListener("click", () => {
+                document.getElementById("stats-modal").style.display = "none";
+            });
+
+            document.getElementById("btn-submit-guess").addEventListener("click", submitGuess);
+            document.getElementById("btn-reset").addEventListener("click", startGame);
+            document.getElementById("btn-giveup").addEventListener("click", () => {
+                if (!gameOver) {
+                    document.getElementById("message").textContent = `Word was: ${ANSWER}`;
+                    gameOver = true;
+                    document.getElementById("shrine-input").disabled = true;
+                    pData.currentStreak = 0;
+                    savePlayerData();
+                    showDescription();
+                }
+            });
+
+            document.querySelectorAll(".key[data-key]").forEach(button => {
+                button.addEventListener("click", () => {
+                    if (gameOver) return;
+                    const inputEl = document.getElementById("shrine-input");
+                    if (inputEl.value.length < VISUAL_MAX_LENGTH) {
+                        inputEl.value += button.getAttribute("data-key");
+                    }
+                });
+            });
+
+            document.getElementById("btn-backspace").addEventListener("click", () => {
+                const inputEl = document.getElementById("shrine-input");
+                inputEl.value = inputEl.value.slice(0, -1);
+            });
+
+            document.getElementById("btn-enter").addEventListener("click", submitGuess);
+
+            document.getElementById("shrine-input").addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                    submitGuess();
+                }
+            });
+
+            document.getElementById("btn-change-name-trigger").addEventListener("click", () => {
+                const newName = prompt("Enter new player name (Max 10 chars):", pData.name);
+                if (newName !== null) {
+                    const trimmed = newName.trim();
+                    if (!trimmed) {
+                        pData.name = "";
+                        pData.isGuestSkippedName = true;
+                        savePlayerData();
+                    } else if (trimmed.length > 10) {
+                        alert("Please keep it within 10 characters.");
+                    } else {
+                        pData.name = trimmed;
+                        pData.isGuestSkippedName = false;
+                        savePlayerData();
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

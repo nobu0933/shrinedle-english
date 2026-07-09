@@ -1,0 +1,202 @@
+/* 全体の基本設定 */
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #fcfaf2; /* ほんのり和風な白（元のデザインを維持） */
+    color: #333333;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+header {
+    flex-direction: column;
+    align-items: center !important; /* 中央揃えにする */
+    gap: 15px;
+    text-align: center !important;
+}
+
+/* スマホの時は、名前と段位のパネルを中央寄せにして、左のボーダー線を消す */
+#header-player-panel {
+    text-align: center !important;
+    border-left: none !important;
+    border-top: 2px solid #e0dbcd; /* 線の位置を左から「上」に変更 */
+    padding-left: 0 !important;
+    padding-top: 10px;
+    width: 100%;
+    max-width: 300px; /* 線が広がりすぎないように制限 */
+    margin: 0 auto;
+}
+
+h1 {
+    color: #d9333f; /* 神社らしい朱色 */
+    margin: 0;
+    font-size: 2.5rem;
+}
+
+/* パソコン表示（画面幅が768px以上）のときの設定 */
+@media screen and (min-width: 768px) {
+    body {
+        padding: 40px;
+    }
+    header {
+        flex-direction: row !important; /* 横並びにする */
+        justify-content: space-between;
+        align-items: center !important;
+        text-align: left !important;
+    }
+    #header-player-panel {
+        text-align: right !important;
+        border-left: 2px solid #e0dbcd !important; /* ボーダーを左に戻す */
+        border-top: none !important;
+        padding-left: 15px !important;
+        padding-top: 0;
+        width: auto;
+        margin: 0;
+    }
+}
+
+.subtitle {
+    font-size: 0.9rem;
+    color: #666666;
+    margin-top: 5px;
+}
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* ボードの基本設定 */
+#board {
+    display: grid;
+    grid-template-rows: repeat(6, 1fr);
+    gap: 5px;
+}
+
+/* タイル（マス目）のスタイル */
+#board div {
+    width: 60px;
+    height: 60px;
+    border: 2px solid #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    background-color: #fff;
+    box-sizing: border-box;
+}
+
+/* キーボード全体のスタイル */
+#keyboard {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+}
+
+.key-row {
+    display: flex;
+    gap: 4px;
+    width: 100%;
+    justify-content: center;
+}
+
+/* アルファベットキーのスタイル */
+.key {
+    background-color: #e0e0e0;
+    border: none;
+    border-radius: 4px;
+    padding: 15px 0;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    flex: 1;
+    min-width: 30px;
+    max-width: 44px;
+    text-align: center;
+    color: #333;
+    user-select: none;
+}
+
+/* ENTER/DELなどの幅広キー */
+.key.wide {
+    max-width: 65px;
+    font-size: 0.85rem;
+}
+
+/* 正解アニメーション */
+.correct-animation {
+    animation: flipCorrect 0.6s ease forwards;
+}
+
+@keyframes flipCorrect {
+    0% { transform: rotateX(0deg); background-color: #fff; }
+    45% { transform: rotateX(90deg); background-color: #fff; }
+    55% { transform: rotateX(90deg); background-color: green; color: white; border-color: green; }
+    100% { transform: rotateX(0deg); background-color: green; color: white; border-color: green; }
+}
+
+/* 位置違いアニメーション */
+.present-animation {
+    animation: flipPresent 0.6s ease forwards;
+}
+
+@keyframes flipPresent {
+    0% { transform: rotateX(0deg); background-color: #fff; }
+    45% { transform: rotateX(90deg); background-color: #fff; }
+    55% { transform: rotateX(90deg); background-color: #e67e22; color: white; border-color: #e67e22; }
+    100% { transform: rotateX(0deg); background-color: #e67e22; color: white; border-color: #e67e22; }
+}
+
+/* 不一致アニメーション */
+.absent-animation {
+    animation: flipAbsent 0.6s ease forwards;
+}
+
+@keyframes flipAbsent {
+    0% { transform: rotateX(0deg); background-color: #fff; }
+    45% { transform: rotateX(90deg); background-color: #fff; }
+    55% { transform: rotateX(90deg); background-color: #7f8c8d; color: white; border-color: #7f8c8d; }
+    100% { transform: rotateX(0deg); background-color: #7f8c8d; color: white; border-color: #7f8c8d; }
+}
+
+/* 文字が入力されたときのアニメーション */
+.pop-animation {
+    animation: popIn 0.1s ease forwards;
+}
+
+@keyframes popIn {
+    0% { transform: scale(1); border-color: #ccc; }
+    50% { transform: scale(1.1); border-color: #666; }
+    100% { transform: scale(1); border-color: #666; }
+}
+
+/* 間違った文字数などの時の揺れるアニメーション */
+.shake-animation {
+    animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    15%, 45%, 75% { transform: translateX(-5px); }
+    30%, 60%, 90% { transform: translateX(5px); }
+}
+
+/* 解説表示のフェードイン */
+.description-fade-in {
+    animation: fadeInTextKey 1.5s ease forwards;
+}
+
+@keyframes fadeInTextKey {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
