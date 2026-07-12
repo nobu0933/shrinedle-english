@@ -9,6 +9,11 @@ const SHRINE_DATA_English = {
         desc: "三条通沿いの小高い丘の上に位置する。昔は、目の前に東海道が通っていた。",
         desc_english: "Located on a small hill along Sanjo-dori Street. In the past, the Tokaido road ran right in front of it."
     },
+    "IKUYO": { 
+        kanji: "幾世稲荷神社", 
+        desc: "二条城の南東に位置する。やたらと横に細長い境内が特徴。",
+        desc_english: "Located southeast of Nijo Castle. It is characterized by its remarkably long and narrow grounds."
+    },
     "ISAMI": { 
         kanji: "勇身八幡宮", 
         desc: "深泥池の西に位置する。「いさみ」という読み方は私の直感なので、間違っているかもしれない。",
@@ -28,6 +33,11 @@ const SHRINE_DATA_English = {
         kanji: "稲葉神社", 
         desc: "淀城跡の中にある。周辺には、京都競馬場がある。",
         desc_english: "Located within the ruins of Yodo Castle. The Kyoto Racecourse is located in the surrounding area."
+    },
+    "URAKU": { 
+        kanji: "有楽稲荷神社", 
+        desc: "東山の街中に位置する。織田信長の弟、織田有楽斎に由来することから、「織田稲荷」とも呼ばれる。",
+        desc_english: "Located in the heart of the Higashiyama district. It is also known as 'Oda Inari' because of its connection to Oda Urakusai, the younger brother of the famous warlord Oda Nobunaga."
     },
     "KYOTO": { 
         kanji: "京都大神宮", 
@@ -53,6 +63,11 @@ const SHRINE_DATA_English = {
         kanji: "五社神社", 
         desc: "桂駅の南東に位置する。境内には、茅葺屋根の建物などがあり、雰囲気がいい",
         desc_english: "Located southeast of Katsura Station. The grounds feature thatched-roof buildings and have a wonderful atmosphere."
+    },
+    "GOSHO": { 
+        kanji: "御所八幡宮", 
+        desc: "御池通の面する。高倉通りにも面することから、「高倉八幡」とも呼ばれる。",
+        desc_english: "Facing Oike Street. Since it also faces Takakura Street, it is commonly referred to as 'Takakura Hachiman' as well."
     },
     "GORYO": { 
         kanji: "御靈神社", 

@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Shrinedle - English</title>
     
-    <link rel="icon" href="KSK_fabicon_1.PNG?v=2" type="image/png">
-    <link rel="apple-touch-icon" href="KSK_logo.PNG?v=2">
+    <link rel="icon" href="KSK_fabicon_1.png" type="image/png">
+    <link rel="apple-touch-icon" href="KSK_logo.png?v=2">
 
 	<meta name="description" content="神社ワードル。Shrinedle。Jinja Wordle">
 	<meta name="keywords" content="神社ワードル, shrinedle, 神ドル, Shrinedle, 京都, 神社, ワードル, Shrine, shrine, wordle, Wordle, Kyoto, シュラインドル">
@@ -111,12 +111,15 @@
 
     <div id="name-setup-screen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255,255,255,0.98); z-index: 9999; justify-content: center; align-items: center; text-align: center; padding: 20px; box-sizing: border-box;">
         <div style="background: white; border: 2px solid #d9333f; border-radius: 12px; padding: 40px 30px; max-width: 450px; width: 100%; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
-            <h2 style="color: #d9333f; margin-top: 0; font-size: 1.8rem; margin-bottom: 10px;">Wordle EN</h2>
+            <h2 style="color: #d9333f; margin-top: 0; font-size: 1.8rem; margin-bottom: 10px;">Shrinedle English</h2>
             <p style="font-weight: bold; color: #333; margin-bottom: 25px; font-size: 1.1rem;">Set Player Name</p>
             <input type="text" id="player-name-input" maxlength="10" placeholder="Enter Name (Max 10 chars)" style="width: 100%; padding: 12px; font-size: 1.1rem; border: 2px solid #ccc; border-radius: 6px; text-align: center; box-sizing: border-box; margin-bottom: 15px;">
             <button id="btn-save-name" style="width: 100%; padding: 12px; background-color: #d9333f; color: white; border: none; border-radius: 6px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: background-color 0.2s; margin-bottom: 10px;">Register & Start</button>
             <button id="btn-skip-name" style="width: 100%; padding: 12px; background-color: #7f8c8d; color: white; border: none; border-radius: 6px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: background-color 0.2s;">Play as Guest</button>
             <p style="color: #7f8c8d; font-size: 0.85rem; margin-top: 20px; line-height: 1.4;">* You can change your name anytime from the stats panel.</p>
+	   <p style="font-size: 1.1rem; color: #555; margin: 20px 0 0 0; border-top: 1px dashed #eee; padding-top: 15px;">
+                If you want to play Japanese ver. , click <a href="https://nobu0933.github.io/shrinedle/" target="_blank" style="color: #0066cc; text-decoration: underline; font-weight: bold;">here</a>.
+            </p>
         </div>
     </div>
 
@@ -145,17 +148,17 @@
         </div>
     </div>
 
-    <header style="display: flex; justify-content: space-between; align-items: center; max-width: 750px; margin: 0 auto 25px auto; padding: 0 10px; box-sizing: border-box; text-align: left;">
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <div style="padding-right: 5px;">
-                <h1 style="color: #d9333f; margin: 0; font-size: 2.6rem; line-height: 1.1; font-weight: bold;">Shrinedle</h1>
-                <div class="subtitle" style="font-size: 1rem; color: #666; margin-top: 4px; letter-spacing: 2px;">神社ワードル</div>
+    <header style="display: flex !important; justify-content: center !important; align-items: center !important; max-width: 750px; margin: 0 auto 25px auto; padding: 0 10px; box-sizing: border-box; text-align: center !important;">
+        <div style="display: flex !important; align-items: center !important; justify-content: center !important; gap: 15px;">
+            <div style="padding: 0; text-align: center !important;">
+                <h1 style="color: #d9333f !important; margin: 0 !important; font-size: 2.6rem !important; line-height: 1.1 !important; font-weight: bold !important; text-align: center !important; display: block !important;">Shrinedle</h1>
+                <div class="subtitle" style="color: #d9333f !important; margin: 0 !important; font-size: 2.6rem !important; line-height: 1.1 !important; font-weight: bold !important; text-align: center !important; display: block !important;">English</div>
             </div>
         </div>
 
         <div style="display: flex; justify-content: center; align-items: center; flex: 1; padding: 0 10px;">
             <button id="btn-secret-logo" class="logo-btn" title="制作者日記を見る">
-                <img src="KSK_logo.PNG" alt="KSK Logo" style="height: 110px; width: auto; object-fit: contain; display: block;">
+                <img src="KSK_logo.png" alt="KSK Logo" style="height: 110px; width: auto; object-fit: contain; display: block;">
             </button>
         </div>
 
@@ -177,6 +180,13 @@
             <li style="margin-bottom: 8px; font-weight: bold; color: #d9333f;">All questions are based on shrines in Kyoto. (Includes some lesser-known shrines.)</li>
             <li style="margin-bottom: 8px;">Guess the 5-letter word in 6 attempts.</li>
             <li style="margin-bottom: 8px;">Each guess must be a valid 5-letter word from the shrine list.</li>
+            <li style="margin-bottom: 8px;">
+                Please use the Hepburn romanization system.<br>
+                <span style="font-size: 0.9em; display: block; margin-top: 4px;">
+                    e.g., <span style="color: #16a34a; font-weight: bold; font-size: 1.2em;">✔</span> KYOTO / <span style="color: #dc2626; font-weight: bold; font-size: 1.2em;">✖</span> KYOUTO<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #16a34a; font-weight: bold; font-size: 1.2em;">✔</span> GEMBU / <span style="color: #dc2626; font-weight: bold; font-size: 1.2em;">✖</span> GENBU
+                </span>
+            </li>
             <li style="margin-bottom: 8px;">The color of the tiles will change to show how close your guess was to the word.</li>
             <li style="margin-bottom: 8px;"><b style="color: #6aaa64;">Green</b>: The letter is in the word and in the correct spot.</li>
             <li style="margin-bottom: 8px;"><b style="color: #c9b458;">Yellow</b>: The letter is in the word but in the wrong spot.</li>
@@ -324,7 +334,7 @@
             if (wins >= 30 && recentAvg <= 4.0) return "Master";
             if (wins >= 15 && streak >= 5) return "Expert";
             if (wins >= 5) return "Adept";
-            if (wins >= 1) return "Apprentice";
+            if (wins >= 2) return "Apprentice";
             
             return "Novice";
         }
