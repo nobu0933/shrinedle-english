@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Shrinedle - English</title>
     
-    <link rel="icon" href="KSK_fabicon_1.png?v=2" type="image/png">
+    <link rel="icon" href="KSK_fabicon_1.png" type="image/png">
     <link rel="apple-touch-icon" href="KSK_logo.png?v=2">
 
 	<meta name="description" content="神社ワードル。Shrinedle。Jinja Wordle">
@@ -148,31 +148,31 @@
         </div>
     </div>
 
-    <header style="display: flex !important; justify-content: center !important; align-items: center !important; max-width: 750px; margin: 0 auto 25px auto; padding: 0 10px; box-sizing: border-box; text-align: center !important;">
-        <div style="display: flex !important; align-items: center !important; justify-content: center !important; gap: 15px;">
-            <div style="padding: 0; text-align: center !important;">
-                <h1 style="color: #d9333f !important; margin: 0 !important; font-size: 2.6rem !important; line-height: 1.1 !important; font-weight: bold !important; text-align: center !important; display: block !important;">Shrinedle</h1>
-                <div class="subtitle" style="color: #d9333f !important; margin: 0 !important; font-size: 2.6rem !important; line-height: 1.1 !important; font-weight: bold !important; text-align: center !important; display: block !important;">English</div>
+    <header class="game-header">
+        <div class="header-main-group" style="display: flex; align-items: center; gap: 15px;">
+            <div class="header-title-area" style="text-align: center;">
+                <h1 style="color: #d9333f; margin: 0; font-size: 2.6rem; line-height: 1.1; font-weight: bold; display: block;">Shrinedle</h1>
+                <div class="subtitle" style="color: #d9333f; margin: 5px 0 0 0; font-size: 2.6rem; line-height: 1.1; font-weight: bold; display: block;">English</div>
+            </div>
+            
+            <div class="header-logo-area">
+                <button id="btn-secret-logo" class="logo-btn" title="制作者日記を見る" style="background: none; border: none; padding: 0; cursor: pointer;">
+                    <img src="KSK_logo.PNG?v=3" alt="KSK Logo" style="height: 110px; width: auto; object-fit: contain; display: block;">
+                </button>
             </div>
         </div>
 
-        <div style="display: flex; justify-content: center; align-items: center; flex: 1; padding: 0 10px;">
-            <button id="btn-secret-logo" class="logo-btn" title="制作者日記を見る">
-                <img src="KSK_logo.png?v=2" alt="KSK Logo" style="height: 110px; width: auto; object-fit: contain; display: block;">
-            </button>
-        </div>
-
-        <div id="header-player-panel" style="text-align: right; border-left: 2px solid #e0dbcd; padding-left: 15px; min-width: 140px;">
+        <div id="header-player-panel" style="min-width: 140px;">
             <div id="display-player-name" style="font-weight: bold; color: #333; font-size: 1.05rem; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">Guest</div>
             <div id="display-player-rank" style="font-size: 1.15rem; color: #d9333f; font-weight: bold; margin-bottom: 8px; white-space: nowrap;">Rank: Novice</div>
             <button id="btn-view-stats" style="padding: 6px 12px; background-color: #d9333f; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.85rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); white-space: nowrap;">View Stats</button>
         </div>
     </header>
 
-    <div class="pc-wide-container" style="text-align: center; margin-bottom: 20px; font-size: 1.2rem; color: #333;">
+<div id="japanese-link-container" class="pc-wide-container" style="text-align: center; margin-bottom: 20px; font-size: 1.2rem; color: #333;">
 
-        If you want to play Japanese ver. , click <a href="https://nobu0933.github.io/shrinedle/" target="_blank" style="color: #0066cc; text-decoration: underline; font-weight: bold;">here</a>.
-    </div>
+    If you want to play Japanese ver. , click <a href="https://nobu0933.github.io/shrinedle/" target="_blank" style="color: #0066cc; text-decoration: underline; font-weight: bold;">here</a>.
+</div>
 
     <div id="rule-box" class="pc-wide-container" style="background-color: #ffffff; border: 2px solid #e0dbcd; border-radius: 8px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: left;">
         <h3 style="margin-top: 0; margin-bottom: 12px; color: #d9333f; font-size: 1.2rem; border-bottom: 2px solid #d9333f; padding-bottom: 5px; display: inline-block;">Rules</h3>
@@ -645,7 +645,22 @@
                 }
 
                 section.style.display = "block";
+		document.getElementById("japanese-link-container").style.display = "none";
+                document.getElementById("rule-box").style.display = "none";
+                document.getElementById("game-content").style.display = "none";
+                
                 section.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            document.getElementById("btn-close-diary").addEventListener("click", () => {
+                document.getElementById("diary-section").style.display = "none";
+                
+                // 🛠️【修正】元通りの正しいスタイル（block や flex）で再表示する
+                document.getElementById("japanese-link-container").style.display = "block";
+                document.getElementById("rule-box").style.display = "block";
+                document.getElementById("game-content").style.display = "flex"; // 👈ここをflexにすることで配置崩れを防ぎます！
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
 
             document.getElementById("btn-close-diary").addEventListener("click", () => {
