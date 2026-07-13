@@ -39,6 +39,16 @@ const SHRINE_DATA_English = {
         desc: "東山の街中に位置する。織田信長の弟、織田有楽斎に由来することから、「織田稲荷」とも呼ばれる。",
         desc_english: "Located in the heart of the Higashiyama district. It is also known as 'Oda Inari' because of its connection to Oda Urakusai, the younger brother of the famous warlord Oda Nobunaga."
     },
+    "OTOYO": { 
+        kanji: "大豊神社", 
+        desc: "哲学の道から更に東に入ったところにある。様々な動物を祀っている。",
+        desc_english: "Located a bit further east from the Philosopher's Path. It is known for enshrining various animals."
+    },
+    "OHARA": { 
+        kanji: "大原神社", 
+        desc: "四条烏丸の南西側に位置する。別に大原にあるわけではない。",
+        desc_english: "Located southwest of Shijo Karasuma. Despite its name, it is not actually located in the Ohara area."
+    },
     "KYOTO": { 
         kanji: "京都大神宮", 
         desc: "京都一の繁華街、河原町にひっそり佇む。明治時代創建で歴史は浅い。",
