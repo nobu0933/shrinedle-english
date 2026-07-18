@@ -99,6 +99,11 @@ const SHRINE_DATA_English = {
         desc: "扇町公園の中にある。桜の名所としても知られる。",
         desc_english: "Located inside Ogimachi Park. It is also well-known as a beautiful spot for cherry blossoms."
     },
+    "TAKIO": { 
+        kanji: "瀧尾神社", 
+        desc: "東福寺駅の近くに位置する。全長8ｍの木彫りの龍は圧巻。",
+        desc_english: "Located near Tofukuji Station. The 8-meter-long wooden dragon carving is absolutely breathtaking."
+    },
     "TENDO": { 
         kanji: "天道神社", 
         desc: "大宮駅の南東に位置する。応仁の乱前は御池通沿いにあったそう。",
